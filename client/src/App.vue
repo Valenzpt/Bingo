@@ -1,15 +1,21 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <NavbarComponent v-if="isAuthenticated" />
+    <RouterView/>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import NavbarComponent from './components/NavbarComponent.vue';
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    NavbarComponent,
+  },
+  computed: {
+    isAuthenticated(){
+      return !!localStorage.getItem('token'); //devuelve true si hay existe el token
+    }
   }
 }
 </script>
