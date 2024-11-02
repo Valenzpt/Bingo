@@ -13,8 +13,8 @@ Usuario.hasMany(Partida, {foreignKey: 'ganador_id'});
 Usuario.hasMany(Tarjeta, {foreignKey: 'usuario_id'});
 Tarjeta.belongsTo(Usuario, {foreignKey: 'usuario_id'});
 
-//Relación entre Partida y Balota
-Partida.hasMany(Balota, {foreignKey: 'partida_id'});
-Balota.belongsTo(Partida, {foreignKey: 'partida_id'});
+//Relación entre partida y tarjeta
+Partida.belongsTo(Tarjeta, {as: 'tarjeta', foreignKey: 'partida_id'});
+Tarjeta.hasMany(Partida, {foreignKey: 'partida_id'});
 
 module.exports = {Usuario, Partida, Tarjeta, Balota};
