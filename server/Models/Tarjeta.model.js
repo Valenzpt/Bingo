@@ -19,10 +19,19 @@ Tarjeta.init({
         references: {
             model: 'usuarios',
             key: 'id' //relacion con tabla usuarios
-        }
+        },
+        allowNull: false
+    },
+    partida_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'partidas',
+            key: 'id' //relacion con tabla partidas
+        },
+        allowNull: false
     }
 },{
-    db,
+    sequelize: db,
     modelName: 'Tarjeta',
     tableName: 'tarjetas',
     timestamps: false

@@ -13,8 +13,9 @@ CREATE TABLE usuarios(
 --tabla de partidas
 CREATE TABLE partidas(
     id INT PRIMARY KEY AUTO_INCREMENT,
-    estado ENUM('activo', 'finalizado') NOT NULL,
+    estado ENUM('esperando','activo', 'finalizado') NOT NULL,
     ganador_id INT,
+    balotasLanzadas JSON NOT NULL DEFAULT '[]',
     FOREIGN KEY (ganador_id) REFERENCES usuarios(id)
 );
 
@@ -22,16 +23,8 @@ CREATE TABLE partidas(
 CREATE TABLE tarjetas(
     id INT PRIMARY KEY AUTO_INCREMENT,
     usuario_id INT NOT NULL,
+    partida_id INT NOT NULL,
     numeros JSON NOT NULL,
     estado ENUM('activo', 'completado') NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-);
-
---tabla de balotas
-CREATE TABLE balotas(
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    numero INT NOT NULL,
-    letra ENUM('B', 'I', 'N', 'G', 'O') NOT NULL,
-    partida_id INT NOT NULL,
-    FOREIGN KEY (partida_id) REFERENCES partidas(id)
 );

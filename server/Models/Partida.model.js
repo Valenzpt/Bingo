@@ -7,7 +7,7 @@ class Partida extends Model {
 //definimos el modelo de Partida en sequelize
 Partida.init({
     estado: {
-        type: DataTypes.ENUM('activo', 'finalizado'),
+        type: DataTypes.ENUM('esperando','activo', 'finalizado'),
         allowNull: false
     },
     ganador_id: {
@@ -16,9 +16,13 @@ Partida.init({
             model: 'usuarios',
             key: 'id'
         }
+    },
+    balotasLanzadas: {
+        type: DataTypes.JSON,
+        defaultValue: []
     }
 },{
-    db,
+    sequelize: db,
     modelName: 'Partida',
     tableName: 'partidas',
     timestamps: false

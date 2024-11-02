@@ -13,6 +13,7 @@ app.use(bodyParser.json()); //configuramos el bodyparser para recibir formato JS
 
 
 app.use(require('./Routes/usuarioRoutes')); //incluimos las rutas de usuario
+app.use(require('./Routes/juegoRoutes')); //incluimos las rutas de juego
 
 app.get("/api/home", authenticateToken, (req, res)=>{
     res.json({message: 'Bienvenido', username: req.usuario.username});
