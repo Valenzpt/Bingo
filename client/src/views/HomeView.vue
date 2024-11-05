@@ -6,22 +6,15 @@
 </template>
 <script>
 import api from '@/api';
-import {io} from 'socket.io-client';
 // import { jwtDecode } from 'jwt-decode';
 export default {
     data(){
         return {
             username: '',
-            mensaje: '',
-            socket: null
+            mensaje: ''
         }
     },
     async mounted(){
-        this.socket = io('http://localhost:3000');
-        this.socket.on('juegoComenzado', (data)=>{
-            console.log('juego comenzado en front home');
-            console.log(data.message);
-        });
         try {
             const token = localStorage.getItem('token');
             if(!token){
