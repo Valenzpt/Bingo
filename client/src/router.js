@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from './views/LoginView.vue';
 import RegisterView from './views/RegisterView.vue';
 import HomeView from './views/HomeView.vue';
+import LobbyView from './views/LobbyView.vue';
 
 const routes = [
     {
@@ -19,6 +20,12 @@ const routes = [
         name: 'Home',
         component: HomeView,
         meta: { requiresAuth: true}
+    },
+    {
+        path: '/lobby/:id',
+        name: 'Lobby',
+        component: LobbyView,
+        props: true
     },
 ];
 

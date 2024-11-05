@@ -1,7 +1,16 @@
 const JuegoServicio = require('../services/juegoServicio');
 
 class JuegoController {
-   
+    static async iniciarUnirSala(req, res) {
+        
+        const usuarioId = req.usuario.id;
+        try {
+            const {sala, usuarios} = await JuegoServicio.iniciarUnirSala(usuarioId);
+            return res.status(200).json({message: 'Te has unido a la sala', sala, usuarios})
+        } catch (error) {
+            res.status(500).json({error: 'Error al iniciar o unirse a la sala'})
+        }
+    }
     // Método adicional para generar tarjetas 
     static async generarTarjeta(req, res) {
         try {

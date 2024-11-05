@@ -1,14 +1,17 @@
 const express = require("express");
+const http = require('http');
 const bodyParser = require("body-parser");
-const cors = require("cors");
 const authenticateToken = require("./Middlewares/authMiddleware");
-//creamos app express
-const app = express();
+const cors = require("cors");
+const {init} = require('./socket');
 
-app.use(cors({
+const corsOptions = {
     origin: 'http://localhost:8080',
     credentials: true,
-}));
+};
+//creamos app express
+const app = express();
+app.use(cors(corsOptions));
 app.use(bodyParser.json()); //configuramos el bodyparser para recibir formato JSON
 
 
@@ -18,5 +21,9 @@ app.use(require('./Routes/juegoRoutes')); //incluimos las rutas de juego
 app.get("/api/home", authenticateToken, (req, res)=>{
     res.json({message: 'Bienvenido', username: req.usuario.username});
 });
+
+const server = http.createServer(app);
+init(server);
+
 //exportamos app express
-module.exports =app;
+module.exports =server;
