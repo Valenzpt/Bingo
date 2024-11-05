@@ -6,6 +6,10 @@ import LobbyView from './views/LobbyView.vue';
 
 const routes = [
     {
+        path: '/',
+        redirect: 'home',
+    },
+    {
         path: '/login',
         name: 'Login',
         component: LoginView,
@@ -33,5 +37,13 @@ const router = createRouter({
     history: createWebHistory(),
     routes,
 });
+router.beforeEach((to, from, next)=>{
+    const token = localStorage.getItem('token');
 
+    if(to.matched.some(record=> record.meta.requiresAuth) && !token) {
+        next({name :'Login'});
+    }else{
+        next();
+    }
+})
 export default router;

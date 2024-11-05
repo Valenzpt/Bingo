@@ -35,18 +35,14 @@
             this.socket = io('http://localhost:3000', {
                 transports: ['websocket']
             });
-            this.socket.on('connect', () => {
-                console.log('socket conectado----SSSSSS', this.socket.id);
-            });
+            this.socket.emit('unirSala', this.sala.id);
             this.socket.on('actualizarTemporizador', (data)=>{
                 console.log('tiempo restante', data.tiempoRestante);
                 this.tiempoRestante = data.tiempoRestante;
             });
-            this.socket.on('juegoComenzado', (data)=>{
-                console.log('ha comenzado en fronnnnn.---------');
-                console.log(data.message);
-            })
-            this.socket.emit('iniciarJuego', this.sala.id);
+            this.socket.on('actualizarUsuarios', (data)=>{
+                this.usuarios = data;
+            });
         },
         beforeUnmount(){
             if(this.socket){
