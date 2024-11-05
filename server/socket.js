@@ -2,27 +2,6 @@ const {Server} = require('socket.io');
 
 let io;
 
-<<<<<<< HEAD
-function init(server) {
-    io = new Server(server, {
-        cors: {
-            origin: 'http://localhost:8080',
-            credentials: true,
-        }
-    });
-
-    io.on('connection', (socket)=>{
-        console.log('nuevo usuario conectadooxxxxxxxxxxxxxxxxxx', socket.id);
-
-        socket.on('iniciarJuego', (sala)=>{
-            socket.join(sala);
-            console.log(`usuario coenctado ${socket.id} a sala ${sala}`);
-            io.to(sala).emit('juegoComenzado', {message: 'El juego ha comenzado'});
-        });
-    });
-}
-
-=======
 /**
  * inicializo el servidor de websocket
  * @param {*} server servidor http al que se adjunta el socket 
@@ -48,7 +27,6 @@ function init(server) {
  * Obtiene la instancia del servidor websocket
  * @returns la instancia de socket.io
  */
->>>>>>> main
 function getIo(){
     if(!io){
         throw new Error("Socket no iniciado");
