@@ -11,7 +11,7 @@ Tarjeta.init({
         allowNull: false
     },
     estado: {
-        type: DataTypes.ENUM('activo', 'completado'),
+        type: DataTypes.ENUM('activo','descalificado', 'completado'),
         allowNull: false
     },
     usuario_id: {

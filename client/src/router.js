@@ -3,7 +3,7 @@ import LoginView from './views/LoginView.vue';
 import RegisterView from './views/RegisterView.vue';
 import HomeView from './views/HomeView.vue';
 import LobbyView from './views/LobbyView.vue';
-
+import JuegoView from './views/JuegoView.vue';
 const routes = [
     {
         path: '/',
@@ -29,6 +29,12 @@ const routes = [
         path: '/lobby/:id',
         name: 'Lobby',
         component: LobbyView,
+        props: true
+    },
+    {
+        path: '/juego/:salaId',
+        name: 'Juego',
+        component: JuegoView,
         props: true
     },
 ];

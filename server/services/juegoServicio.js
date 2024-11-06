@@ -31,12 +31,12 @@ class JuegoServicio {
         }
 
         const usuarios = usuariosEnSala.get(sala.id);
+
+        const usuarioObj = {id: usuario.id, correo: usuario.username};
         //agrega el usuario sino esta ya en la sala
-        if(!usuarios.includes(usuario)){
-            usuarios.push(usuario);
+        if(!usuarios.find(u=> u.id===usuarioObj.id)){
+            usuarios.push(usuarioObj);
             getIo().to(sala.id).emit('actualizarUsuarios', usuarios); // notifica a la sala os usuarios actualizados
-        }else{
-            throw new Error('El usuario ya está en la sala');
         }
 
         return {sala, usuarios}; //devuelve sala y usuarios
@@ -50,15 +50,21 @@ class JuegoServicio {
         let tiempoRestante = 30; //tiempo inicial en seg
         const temporizador = setInterval(async () => {
             if(tiempoRestante>0){
-                console.log('tiempo restante', tiempoRestante, 'en sala.........', sala.id);
                 getIo().to(sala.id).emit('actualizarTemporizador', { tiempoRestante });
                 tiempoRestante--; //decrementa el tiempo restante
             }else{
                 clearInterval(temporizador) //detiene el temporizador
                 sala.estado = 'activo'; //cambia el estado de la partida a activo
                 await sala.save(); //guarda los cambios en la base de datos
+                const usuarios = usuariosEnSala.get(sala.id) || [];
+
+                getIo().to(sala.id).emit('juegoComenzado', {
+                    message: 'El juego ha comenzado',
+                    usuarios,
+                    salaId: sala.id
+                });
+                //this.iniciarLanzamiento(sala.id);
                 usuariosEnSala.delete(sala.id); //elimina la lista de usuarios de la sala
-                getIo().to(sala.id).emit('juegoComenzado', {message: 'El juego ha comenzado'});
             }
         }, 1000); //se ejecuta cada segundo
         salas.set(sala.id, temporizador); //almacena el temporizador en la sala
@@ -96,12 +102,74 @@ class JuegoServicio {
         const nuevaBalota = GeneradorServicio.lanzarBalota(balotasLanzadas); //lanza una nueva balota
         partida.balotasLanzadas = balotasLanzadas; //actualiza la lista de balotas lanzadas
         await Partida.update({balotasLanzadas}, {where: {id: partidaId}}); //guarda los cambios en la bd
+        
         return nuevaBalota; //Devuelve nueva balota
     }
     
-    
-    static async verificarGanador(){
+    /**
+     * Servicio para iniciar el lanzamiento de balotas con un intervalo de 5 segundos
+     * @param {*} partidaId 
+     * @returns 
+     */
+   /*  static iniciarLanzamiento(partidaId){
+        const intervalo = setInterval(async () => {
+            try {
+                const nuevaBalota = await this.lanzarBalota(partidaId);
+                console.log('nueva balota lanzada: ', nuevaBalota);
 
+                getIo().to(partidaId).emit('nuevaBalota', nuevaBalota);
+            } catch (error) {
+                console.log('Error al lanzar balota: ', error.message);
+                clearInterval(intervalo);
+            }
+        }, 5000);
+    } */
+
+    /**
+     * Verifica el ganador al ingresar los numeros de tarjeta y los seleccionados
+     * @param {*} partidaId 
+     * @param {*} usuarioId 
+     * @param {*} seleccionados 
+     * @returns 
+     */
+    static async verificarGanador(partidaId, usuarioId, seleccionados){
+        //validaciones de existencia de partida y tarjeta
+        const partida = await Partida.findByPk(partidaId);
+        if(!partida) throw Error('Partida no encontrada');
+
+        const tarjeta = await Tarjeta.findOne({
+            where: {usuario_id: usuarioId, partida_id: partidaId}
+        });
+
+        if(!tarjeta) throw Error('Tarjeta no encontrada');
+
+        //verifica el juego con los numeros de la tarjeta y los seleccionados
+        const resultado = GeneradorServicio.verificarJuego(tarjeta.numeros, seleccionados);
+        if(resultado === 'sin victoria'){
+            await this.descalificarUsuario(partidaId, usuarioId); //descalifica el usuario si marco bingo sin completar alguna de las 4 formas
+            return 'Descalificado';
+        }else{
+            //Se actualiza la partida a finalizada y se envia el socket de ganador
+            await Partida.update({estado: 'finalizado'}, {where: {id: partidaId}});
+            getIo().to(partidaId).emit('juegoTerminado', {
+                mensaje: `Tenemos un ganador con ${resultado}!`,
+                ganadorId: usuarioId
+            })
+        }
+        return resultado;
+    }
+
+    /**
+     * Descalifica el usuairo
+     * @param {*} partidaId 
+     * @param {*} usuarioId 
+     */
+    static async descalificarUsuario(partidaId, usuarioId){
+        await Tarjeta.update(
+            { estado: 'descalificado' },
+            {where: { usuario_id: usuarioId, partida_id: partidaId}}
+        );
+        getIo().to(partidaId).emit('usuarioDescalificado', {usuarioId});
     }
 }
 

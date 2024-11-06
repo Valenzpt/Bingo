@@ -25,6 +25,6 @@ CREATE TABLE tarjetas(
     usuario_id INT NOT NULL,
     partida_id INT NOT NULL,
     numeros JSON NOT NULL,
-    estado ENUM('activo', 'completado') NOT NULL,
+    estado ENUM('activo', 'descalificado', 'completado') NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );

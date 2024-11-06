@@ -9,9 +9,9 @@ class JuegoController {
      */
     static async iniciarUnirSala(req, res) {
         
-        const correo = req.usuario.username; //obtiene el correo del usuario de la solicitud
+        const usuario = req.usuario; //obtiene el correo del usuario de la solicitud
         try {
-            const {sala, usuarios} = await JuegoServicio.iniciarUnirSala(correo); //une el usuario a la sala
+            const {sala, usuarios} = await JuegoServicio.iniciarUnirSala(usuario); //une el usuario a la sala
             return res.status(200).json({message: 'Te has unido a la sala', sala, usuarios})
         } catch (error) {
             res.status(500).json({error: 'Error al iniciar o unirse a la sala'})
@@ -56,8 +56,24 @@ class JuegoController {
             res.status(500).json({error: error.message});
         }
     }
+    /**
+     * controlador para verificar si el usuario ha ganado
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
     static async verificarJuego(req, res){
-        
+        const { partidaId, usuarioId, seleccionados } = req.body;
+        try {
+            const resultado = await JuegoServicio.verificarGanador(partidaId, usuarioId, seleccionados);
+            if(resultado === 'Descalificado'){
+                return res.status(200).json({mensaje: 'Descalificado por declarar bingo incorrectamente'});
+            }else{
+                return res.status(200).json({mensaje: `Felicidades has ganados con: ${resultado}`});
+            }
+        } catch (error) {
+            return res.status(500).json({Mensaje: 'Hubo un error al verificar el Bingo', error});
+        }
     }
 }
 

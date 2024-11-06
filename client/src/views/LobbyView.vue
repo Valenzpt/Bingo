@@ -1,12 +1,12 @@
 <template>
     <div>
         <h2>Lobby de Juego</h2>
-        <h3>PArtida id: {{ sala.id }}</h3>
+        <h3>Partida id: {{ sala.id }}</h3>
         <p>Estado: {{ sala.estado }}</p>
         <p>temporizador: {{ tiempoRestante }}</p>
         <h4>Usuarios en sala</h4>
         <ul>
-            <li v-for="usuario in usuarios" :key="usuario">{{ usuario }}</li>
+            <li v-for="usuario in usuarios" :key="usuario">{{ usuario.correo }}</li>
         </ul>
     </div>
 </template>
@@ -24,7 +24,6 @@
             };
         },
         async mounted() {
-            //const salaId = this.$route.params.id;
 
             this.sala = JSON.parse(this.$route.query.sala || {});
             this.usuarios = JSON.parse(this.$route.query.usuarios || {});
@@ -37,12 +36,17 @@
             });
             this.socket.emit('unirSala', this.sala.id);
             this.socket.on('actualizarTemporizador', (data)=>{
-                console.log('tiempo restante', data.tiempoRestante);
                 this.tiempoRestante = data.tiempoRestante;
             });
             this.socket.on('actualizarUsuarios', (data)=>{
                 this.usuarios = data;
             });
+            this.socket.on('juegoComenzado', (data)=>{
+                this.$router.push({
+                    path: `/juego/${data.salaId}`,
+                    query: { usuarios: JSON.stringify(data.usuarios) }
+                })
+            })
         },
         beforeUnmount(){
             if(this.socket){
