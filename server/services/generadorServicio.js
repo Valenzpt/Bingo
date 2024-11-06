@@ -47,7 +47,7 @@ class generadorServicio {
     }
 
     /**
-     * LAnza una balota que no ha sido lanzada previamente
+     * Lanza una balota que no ha sido lanzada previamente
      * @param {*} balotasLanzadas array con balotas que ya han sido lanzadas
      * @returns numero de balota lanzada
      */
@@ -59,6 +59,12 @@ class generadorServicio {
         balotasLanzadas.push(num); //añade la balota a la lista de lanzadas
         return num; //devuelve el numero
     }
+    /**
+     * Verifica si la tarjeta y los numeros seleccionados cumplen con una condición de victoria
+     * @param {*} tarjeta 
+     * @param {*} seleccionados 
+     * @returns devuelve el tipo de victoria
+     */
     static verificarJuego(tarjeta, seleccionados){
         if(this.verificarCompleto(tarjeta, seleccionados)){
             return 'Carton completo';
@@ -77,44 +83,63 @@ class generadorServicio {
         }
         return 'sin victoria';
     }
-
+    /**
+     * Verifica si toda la tarjeta esta completa
+     * @param {*} tarjeta 
+     * @param {*} seleccionados 
+     * @returns 
+     */
     static verificarCompleto(tarjeta, seleccionados) {
         for(const letra in tarjeta){
             for(let i=0; i<tarjeta[letra].length; i++){
-                if(tarjeta[letra][i] !== 'FREE' && !seleccionados[letra][i]){
+                if(tarjeta[letra][i] !== 'FREE' && !seleccionados[letra][i]){ //no e free y no esta seleccionada
                     return false;
                 }
             }
         }
         return true;
     }
-
+    /**
+     * Verifica si hay una diagonal completa
+     * @param {*} tarjeta 
+     * @param {*} seleccionados 
+     * @returns 
+     */
     static verificarDiagonal(tarjeta, seleccionados){
         let diagonal1 = true;
         let diagonal2 = true;
 
+            //diagonal de arriba a abajo 
         for(let i=0; i<5; i++){
+            //no es free y no ha sido seleccionada
             if(tarjeta[Object.keys(tarjeta)[i]][i] !== 'FREE' && !seleccionados[Object.keys(tarjeta)[i]][i]){
                 diagonal1 = false;
-                break;
+                break; //sale del bucle si no ha encontrado numero seleccionado
             }
         }
+        //diagonal de abajo hacia arriba
         for(let i=0; i<5; i++){
             if(tarjeta[Object.keys(tarjeta)[4-i]][i] !== 'FREE' && !seleccionados[Object.keys(tarjeta)[4-i]][i]){
                 diagonal2 = false;
-                break;
+                break;//sale del bucle si no ha encontrado numero seleccionado
             }
         }
         return diagonal1 || diagonal2;
     }
 
+    /**
+     * verifica si una columna vertical esta completa
+     * @param {*} tarjeta 
+     * @param {*} seleccionados 
+     * @returns 
+     */
     static verificarVertical(tarjeta, seleccionados){
         for(let i=0; i<5; i++){
             let vertical = true;
             for(let j=0; j<5; j++){
                 if(tarjeta[Object.keys(tarjeta)[i]][j] !== 'FREE' && !seleccionados[Object.keys(tarjeta)[i]][j]){
                     vertical = false;
-                    break;
+                    break; //sale del bucle si no ha encontrado numero seleccionado
                 }
             }
             if(vertical) return true;
@@ -122,6 +147,12 @@ class generadorServicio {
         return false;
     }
 
+    /**
+     * verifica si hay una fila completa
+     * @param {*} tarjeta 
+     * @param {*} seleccionados 
+     * @returns 
+     */
     static verificarHorizontal(tarjeta, seleccionados){
         for(let i=0; i<5; i++){
             let horizontal = true;
@@ -135,6 +166,12 @@ class generadorServicio {
         }
         return false;
     }
+    /**
+     * verifica las 4 esquinas
+     * @param {*} tarjeta 
+     * @param {*} seleccionados 
+     * @returns 
+     */
     static verificarEsquinas(tarjeta, seleccionados) {
         const esquinas = [
             {col: 0, row:0},

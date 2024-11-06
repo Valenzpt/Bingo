@@ -2,7 +2,7 @@
     <div class="container my-4">
         <h4>Juego en sala: {{ salaId }}</h4>
         <div v-if="juegoTerminado">
-            <h2>Tenemos un ganados!</h2>
+            <h2>Tenemos un ganador!</h2>
             <p>EL usuario {{ ganador }}</p>
         </div>
         <div v-else class="row mb-4">
@@ -159,7 +159,7 @@ export default {
                     clearInterval(this.balotaInterval);
                     return;
                 }
-            }, 2500);
+            }, 5000);
         }
     }
 }
